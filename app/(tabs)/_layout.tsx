@@ -1,17 +1,20 @@
 import { Tabs } from 'expo-router'
 import { View, Text } from 'react-native'
 import {Ionicons} from "@expo/vector-icons"
+import useTheme from '@/hooks/useTheme'
 
+// Responsible for bottom tab navigation layout
 const TabsLayout = () => {
-  return (
+    const {colors} = useTheme();
+    return (
     <Tabs
      screenOptions={{
-        tabBarActiveTintColor: "red",
-        tabBarInactiveTintColor: "green",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: { 
-            backgroundColor: "#c4d0ea", 
+            backgroundColor: colors.surface, 
             borderTopWidth: 1,
-            borderTopColor: "black",
+            borderTopColor: colors.border,
             height: 90,
             paddingBottom: 30,
             paddingTop: 10,
