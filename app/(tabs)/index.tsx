@@ -1,38 +1,23 @@
-import { api } from "@/convex/_generated/api";
-import useTheme, { ColorScheme } from "@/hooks/useTheme";
-import { useMutation, useQuery } from "convex/react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { createHomeStyles } from "@/assets/styles/home.styles";
+import useTheme from "@/hooks/useTheme";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const {toggleDarkMode, colors} = useTheme(); // Get the toggleDarkMode function from the useTheme hook
+  const { toggleDarkMode, colors } = useTheme(); // Get the toggleDarkMode function from the useTheme hook
 
-  const styles = createStyles(colors); // Get createStyles function based on the current color scheme
+  const homeStyles = createHomeStyles(colors); // Get createHomeStyles function based on the current color scheme
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.content}>Edit app/index.tsx to edit this screen.</Text>
-      <Text>hi</Text>
-      <TouchableOpacity onPress={toggleDarkMode}>
-        <Text>toggle the mode</Text>
-      </TouchableOpacity>
-    </View>
+    <LinearGradient colors={colors.gradients.background} style={homeStyles.container}>
+      <SafeAreaView style={homeStyles.safeArea}>
+        <Text>hi</Text>
+        <TouchableOpacity onPress={toggleDarkMode}>
+          <Text>toggle the mode</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
-// Function to create dynamic styles based on the current color scheme (light/dark mode)
-const createStyles = (colors:ColorScheme) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 10,
-      backgroundColor:colors.bg,
-    },
-    content: {
-      fontSize: 22,
-    },
-  });
-  return styles;
-  };
