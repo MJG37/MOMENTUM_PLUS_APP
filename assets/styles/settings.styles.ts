@@ -77,6 +77,11 @@ export const createSettingsStyles = (colors: ColorScheme) => {
       borderLeftWidth: 4,
     },
     statIconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
       marginRight: 16,
     },
     statIcon: {
