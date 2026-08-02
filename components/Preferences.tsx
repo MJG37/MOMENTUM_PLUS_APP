@@ -47,7 +47,25 @@ const Preferences = () => {
           onValueChange={() => setIsNotificationsEnabled(!isNotificationsEnabled)}
           thumbColor={"#fff"}
           trackColor={{ false: colors.border, true: colors.warning }}
-          ios_backgroundColor={colors.border} /* for IOS functionality (line 32) */
+          ios_backgroundColor={colors.border} /* for IOS functionality (see line above) */
+        />
+      </View>
+
+     {/* AUTO SYNC (cloud syncing support) */}
+    <View style={settingsStyles.settingItem}>
+        <View style={settingsStyles.settingLeft}>
+            <LinearGradient colors={colors.gradients.success} style={settingsStyles.settingIcon}>
+            <Ionicons name="notifications" size={18} color="#fff" />
+            </LinearGradient>
+            <Text style={settingsStyles.settingText}>{"Auto Sync to Cloud?"}</Text>
+
+        </View>
+        <Switch
+          value={isAutoSync}
+          onValueChange={() => setisAutoSync(!isAutoSync)}
+          thumbColor={"#fff"}
+          trackColor={{ false: colors.border, true: colors.success }}
+          ios_backgroundColor={colors.border} /* for IOS functionality (see line above) */
         />
       </View>
 
