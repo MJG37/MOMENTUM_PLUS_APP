@@ -18,7 +18,7 @@ type Todo = Doc<"todos">
 export default function Index() {
   const { colors } = useTheme(); // Get the toggleDarkMode function from the useTheme hook
 
-    const [editingId, setEditingId] = useState<Id<"todos"> | null>(null);
+  const [editingId, setEditingId] = useState<Id<"todos"> | null>(null);
   const [editText, setEditText] = useState("");
 
   const homeStyles = createHomeStyles(colors); // Get createHomeStyles function based on the current color scheme
