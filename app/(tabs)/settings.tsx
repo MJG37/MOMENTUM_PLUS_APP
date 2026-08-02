@@ -34,12 +34,15 @@ const SettingsScreen = () => {
           contentContainerStyle={settingsStyles.content}
           showsVerticalScrollIndicator={false}
         >
+          {/* PROGRES STATS */}
           <ProgressStats />
-
-          <DangerZone />
 
           {/* PREFERENCES */}
           <Preferences />
+
+          {/* DANGER ZONE */}
+          <DangerZone />
+          
         </ScrollView>
       </SafeAreaView>
   </LinearGradient>

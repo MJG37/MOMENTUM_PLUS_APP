@@ -1,8 +1,10 @@
 import { createSettingsStyles } from '@/assets/styles/settings.styles';
 import { api } from '@/convex/_generated/api';
 import useTheme from '@/hooks/useTheme';
-import { useMutation } from 'convex/react';
-import { Alert, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useMutation, useQuery } from 'convex/react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 const DangerZone = () => {
 
@@ -11,17 +13,14 @@ const DangerZone = () => {
   // Create the settings styles using the current color scheme
   const settingsStyles = createSettingsStyles(colors);
 
-  // Prepare a Convex mutation function that calls the server-side
-  // `clearAllTodos` mutation. Calling `clearAllTodos()` will run the
-  // server code to remove all todo documents and return a result object.
+  // Prepare a Convex mutation function that calls the server-side `clearAllTodos` mutation. Calling `clearAllTodos()` will run the server code to remove all todo documents and return a result object.
   const clearAllTodos = useMutation(api.todos.clearAllTodos);
+  const todos = useQuery(api.todos.getTodos);
 
   // Handler invoked when the user chooses to reset the app.
   // This shows a confirmation Alert with destructive action.
   const handleResetApp = async () => {
-    // Show a native confirmation dialog to ensure the user wants to proceed
     Alert.alert(
-      // Title of the dialog
       'Reset App',
       // Message clearly communicating the destructive nature of the action
       '⚠️ This will delete ALL your todos permanently. This action cannot be undone.',
@@ -34,16 +33,16 @@ const DangerZone = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              // Execute server-side mutation to remove all todos
-              const result = await clearAllTodos();
+              // Keep a local count of todos before clearing them, since Convex
+              // mutations may not preserve returned payloads on the client.
+              const deletedCount = todos?.length ?? 0;
+              await clearAllTodos();
 
               // Inform the user how many todos were removed. The server
-              // is expected to return an object with `deletedCount`.
+              // is expected to return an object with deletedCount
               Alert.alert(
                 'App Reset',
-                `Successfully deleted ${result.deletedCount} todo${
-                  result.deletedCount === 1 ? '' : 's'
-                }. Your app has been reset.`
+                `Successfully deleted ${deletedCount} todo${deletedCount === 1 ? "" : "s"}. Your app has been reset.`
               );
             } catch (error) {
               // Log error to console for debugging and show a friendly alert
@@ -56,12 +55,25 @@ const DangerZone = () => {
     );
   };
 
-
   return (
-    <View>
-      {/* Visible label for this section — replace or expand with buttons as needed */}
-      <Text>DangerZone</Text>
-    </View>
+    <LinearGradient colors={colors.gradients.surface} style={settingsStyles.section}>
+      <Text style={settingsStyles.sectionTitle}>Danger Zone</Text>
+      
+      {/* Button to call handler function*/}
+      <TouchableOpacity
+        style={[settingsStyles.actionButton, {borderBottomWidth: 0}]}
+        onPress={handleResetApp}
+        activeOpacity={0.7}
+      >
+        <View style={settingsStyles.actionLeft}>
+          <LinearGradient colors={colors.gradients.danger} style={settingsStyles.actionIcon}>
+            <Ionicons name="trash" size={18} color="#ffffff" />
+          </LinearGradient>
+          <Text style={settingsStyles.actionTextDanger}>Reset App</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+      </TouchableOpacity>
+    </LinearGradient>
   );
 };
 
