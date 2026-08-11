@@ -207,6 +207,15 @@ export const createHomeStyles = (colors: ColorScheme) => {
       fontSize: 14,
       fontWeight: "600",
     },
+    welcomeContainer: {
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+    },
+    welcomeText: {
+      fontSize: 24,
+      fontWeight: "800",
+      marginBottom: 12,
+    },
     emptyContainer: {
       alignItems: "center",
       justifyContent: "center",

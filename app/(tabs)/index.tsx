@@ -3,6 +3,7 @@ import EmptyState from "@/components/EmptyState";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import TodoInput from "@/components/TodoInput";
+import { useAuth } from '@/context/AuthContext';
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import useTheme from "@/hooks/useTheme";
@@ -17,6 +18,7 @@ type Todo = Doc<"todos">
 
 export default function Index() {
   const { colors } = useTheme(); // Get the toggleDarkMode function from the useTheme hook
+  const { username } = useAuth();
 
   const [editingId, setEditingId] = useState<Id<"todos"> | null>(null);
   const [editText, setEditText] = useState("");
@@ -168,6 +170,9 @@ export default function Index() {
 
       <StatusBar barStyle={colors.statusBarStyle} />
       <SafeAreaView style={homeStyles.safeArea}>
+        <View style={homeStyles.welcomeContainer}>
+          <Text style={[homeStyles.welcomeText, { color: colors.text }]}>Welcome{username ? `, ${username}` : ''}!</Text>
+        </View>
         <Header />
 
         <TodoInput/>

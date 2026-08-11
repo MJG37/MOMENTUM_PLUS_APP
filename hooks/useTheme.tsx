@@ -1,7 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
-// AsyncStorafe is React Natuve's simple, promise-based API for persisteing small bits of data on a user's device. It is the mobile app equivalent of the the browsser's localStorage, but the asynchoronous and also cross-platform.
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 export interface ColorScheme {
   bg: string;
@@ -95,21 +92,11 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Below is the code responsibile for the light and dark theme provider
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);  //State to keep track of the dark/light mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  useEffect(() => {
-    //get the user's choice
-    AsyncStorage.getItem("darkMode").then((value) => {
-      if (value) setIsDarkMode(JSON.parse(value));
-    });
-  }, []);
-
-  const toggleDarkMode = async () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    await AsyncStorage.setItem("darkMode", JSON.stringify(newMode));
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevMode) => !prevMode);
   };
 
   const colors = isDarkMode ? darkColors : lightColors; // Shows the correct color scheme based on the user's choice

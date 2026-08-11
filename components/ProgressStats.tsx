@@ -38,7 +38,6 @@ const ProgressStats = () => {
               <Text style={settingsStyles.statLabel}>Total Todos</Text>
             </View>
         </LinearGradient>
-        '
          {/* COMPLETED TODOS*/} 
         <LinearGradient
          colors={colors.gradients.background}
@@ -55,7 +54,6 @@ const ProgressStats = () => {
               <Text style={settingsStyles.statLabel}>Completed</Text>
             </View>
         </LinearGradient>
-   '
          {/* ACTIVE TODOS*/} 
         <LinearGradient
          colors={colors.gradients.background}
