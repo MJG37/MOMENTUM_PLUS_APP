@@ -18,7 +18,7 @@ export default function WelcomeScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <View style={[styles.card, { backgroundColor: colors.surface }]}> 
-            <View style={[styles.logoWrapper, { backgroundColor: colors.surface }]}> 
+            <View style={[styles.logoWrapper, { backgroundColor: isDarkMode ? '#000' : colors.surface }]}> 
               <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
             </View>
             <Text style={[styles.heading, { color: colors.text }]}>Welcome to Momentum+</Text>
@@ -60,17 +60,19 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logoWrapper: {
-    width: 96,
-    height: 96,
-    borderRadius: 20,
+    width: 150,
+    height: 150,
+    borderRadius: 48,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    marginBottom: 20,
+    marginBottom: 28,
   },
   logoImage: {
-    width: 64,
-    height: 64,
+    width: 130,
+    height: 130,
+    borderRadius: 32,
+    backgroundColor: '#000',
   },
   heading: {
     fontSize: 36,

@@ -22,8 +22,8 @@ export const createHomeStyles = (colors: ColorScheme) => {
     },
     header: {
       paddingHorizontal: 24,
-      paddingVertical: 32,
-      paddingBottom: 24,
+      paddingVertical: 16,
+      paddingBottom: 20,
     },
     titleContainer: {
       flexDirection: "row",
@@ -209,12 +209,12 @@ export const createHomeStyles = (colors: ColorScheme) => {
     },
     welcomeContainer: {
       paddingHorizontal: 24,
-      paddingVertical: 12,
+      paddingVertical: 8,
     },
     welcomeText: {
-      fontSize: 24,
-      fontWeight: "800",
-      marginBottom: 12,
+      fontSize: 42,
+      fontWeight: "900",
+      marginBottom: 6,
     },
     emptyContainer: {
       alignItems: "center",

@@ -171,7 +171,7 @@ export default function Index() {
       <StatusBar barStyle={colors.statusBarStyle} />
       <SafeAreaView style={homeStyles.safeArea}>
         <View style={homeStyles.welcomeContainer}>
-          <Text style={[homeStyles.welcomeText, { color: colors.text }]}>Welcome{username ? `, ${username}` : ''}!</Text>
+          <Text style={[homeStyles.welcomeText, { color: colors.text }]}>{`Welcome${username ? `, ${username}` : ''}!`}</Text>
         </View>
         <Header />
 

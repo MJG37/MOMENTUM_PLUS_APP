@@ -67,7 +67,7 @@ const DangerZone = () => {
         style: 'destructive',
         onPress: async () => {
           await logout();
-          router.replace('/');
+          router.dismissAll();
         },
       },
     ]);
@@ -80,19 +80,6 @@ const DangerZone = () => {
       {/* Button to call handler function*/}
       <TouchableOpacity
         style={[settingsStyles.actionButton, {borderBottomWidth: 0}]}
-        onPress={handleResetApp}
-        activeOpacity={0.7}
-      >
-        <View style={settingsStyles.actionLeft}>
-          <LinearGradient colors={colors.gradients.danger} style={settingsStyles.actionIcon}>
-            <Ionicons name="trash" size={18} color="#ffffff" />
-          </LinearGradient>
-          <Text style={settingsStyles.actionTextDanger}>Reset App</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[settingsStyles.actionButton, { marginTop: 16 }]}
         onPress={handleLogout}
         activeOpacity={0.7}
       >
@@ -101,6 +88,19 @@ const DangerZone = () => {
             <Ionicons name="log-out-outline" size={18} color="#ffffff" />
           </LinearGradient>
           <Text style={settingsStyles.actionTextDanger}>Log Out</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[settingsStyles.actionButton, { marginTop: 16 }]}
+        onPress={handleResetApp}
+        activeOpacity={0.7}
+      >
+        <View style={settingsStyles.actionLeft}>
+          <LinearGradient colors={colors.gradients.danger} style={settingsStyles.actionIcon}>
+            <Ionicons name="trash" size={18} color="#ffffff" />
+          </LinearGradient>
+          <Text style={settingsStyles.actionTextDanger}>Reset App</Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
       </TouchableOpacity>

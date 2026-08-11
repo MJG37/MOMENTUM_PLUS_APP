@@ -16,6 +16,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
+  clearAllData: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,7 +51,14 @@ const safeRemoveItem = async (key: string): Promise<void> => {
 const getUsers = async (): Promise<User[]> => {
   try {
     const stored = await safeGetItem(USERS_KEY);
-    return stored ? (JSON.parse(stored) as User[]) : [];
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    
+    // Safely filter valid objects
+    return parsed.filter(
+      (u) => u && typeof u.username === "string" && typeof u.password === "string"
+    );
   } catch {
     return [];
   }
@@ -72,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUsername(storedUser);
         }
       } catch {
-        // Ignore storage failures; continue with no authenticated user.
+        // Ignore storage errors
       } finally {
         setLoading(false);
       }
@@ -81,31 +89,56 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadSession();
   }, []);
 
-  const login = async (usernameInput: string, password: string) => {
-    const normalizedUsername = usernameInput.trim();
+  const login = async (usernameInput: string, passwordInput: string) => {
+    const normalizedUsername = usernameInput.trim().toLowerCase();
+    const normalizedPassword = passwordInput.trim();
     const users = await getUsers();
-    const foundUser = users.find(
-      (user) => user.username === normalizedUsername && user.password === password
+
+    const user = users.find(
+      (u) => u.username.trim().toLowerCase() === normalizedUsername
     );
 
-    if (!foundUser) {
-      return { success: false, message: "Username or password is incorrect." };
+    if (!user) {
+      return {
+        success: false,
+        message: "Account not found. Please check your name or sign up.",
+      };
     }
 
-    setUsername(normalizedUsername);
-    await safeSetItem(CURRENT_USER_KEY, normalizedUsername);
+    if (user.password.trim() !== normalizedPassword) {
+      return {
+        success: false,
+        message: "Incorrect password. Please try again.",
+      };
+    }
+
+    setUsername(user.username);
+    await safeSetItem(CURRENT_USER_KEY, user.username);
     return { success: true };
   };
 
-  const signup = async (usernameInput: string, password: string) => {
-    const normalizedUsername = usernameInput.trim();
+  const signup = async (usernameInput: string, passwordInput: string) => {
+    const normalizedUsername = usernameInput.trim().toLowerCase();
+    const normalizedPassword = passwordInput.trim();
     const users = await getUsers();
 
-    if (users.some((user) => user.username === normalizedUsername)) {
-      return { success: false, message: "An account already exists with that username." };
+    const userExists = users.some(
+      (u) => u.username.trim().toLowerCase() === normalizedUsername
+    );
+
+    if (userExists) {
+      return {
+        success: false,
+        message: "An account already exists with that name.",
+      };
     }
 
-    const nextUsers = [...users, { username: normalizedUsername, password }];
+    const newUser: User = {
+      username: normalizedUsername,
+      password: normalizedPassword,
+    };
+
+    const nextUsers = [...users, newUser];
     await setUsers(nextUsers);
     setUsername(normalizedUsername);
     await safeSetItem(CURRENT_USER_KEY, normalizedUsername);
@@ -118,6 +151,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await safeRemoveItem(CURRENT_USER_KEY);
   };
 
+  const clearAllData = async () => {
+    setUsername(null);
+    await safeRemoveItem(USERS_KEY);
+    await safeRemoveItem(CURRENT_USER_KEY);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -127,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         signup,
         logout,
+        clearAllData,
       }}
     >
       {children}
