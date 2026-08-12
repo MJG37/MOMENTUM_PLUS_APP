@@ -26,7 +26,6 @@ export default function Index() {
   const homeStyles = createHomeStyles(colors); // Get createHomeStyles function based on the current color scheme
 
     const todos = useQuery(api.todos.getTodos, { owner: username ?? "" });
-    const pointsSummary = useQuery(api.rewards.getSummary, { owner: username ?? "" });
     const toggleTodo = useMutation(api.todos.toggleTodo);
     const deleteTodo = useMutation(api.todos.deleteTodo);
     const updateTodo = useMutation(api.todos.updateTodo);
@@ -192,18 +191,6 @@ export default function Index() {
             showsVerticalScrollIndicator={false}
           />
         </View>
-        <LinearGradient colors={["#dcfce7", "#bbf7d0"]} style={homeStyles.pointsCard}>
-          <View style={homeStyles.pointsCardLeft}>
-            <LinearGradient colors={colors.gradients.success} style={homeStyles.pointsCardIcon}>
-              <Ionicons name="gift" size={22} color="#ffffff" />
-            </LinearGradient>
-            <View>
-              <Text style={homeStyles.pointsCardTitle}>{pointsSummary?.available ?? 0} Points available</Text>
-              <Text style={homeStyles.pointsCardSubtitle}>Complete tasks to earn more!</Text>
-            </View>
-          </View>
-          <Ionicons name="chevron-forward" size={22} color="#166534" />
-        </LinearGradient>
       </SafeAreaView>
     </LinearGradient>
   );

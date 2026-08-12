@@ -5,7 +5,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { LinearGradient } from "expo-linear-gradient";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import { Alert, Animated, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const REWARDS = [
@@ -21,10 +22,24 @@ export default function RewardsScreen() {
   const styles = createRewardsStyles(colors);
   const summary = useQuery(api.rewards.getSummary, { owner: username ?? "" });
   const redeem = useMutation(api.rewards.redeem);
+  const [deductedPoints, setDeductedPoints] = useState<number | null>(null);
+  const deductionOpacity = useRef(new Animated.Value(0)).current;
+  const deductionOffset = useRef(new Animated.Value(0)).current;
+
+  const showDeduction = (cost: number) => {
+    setDeductedPoints(cost);
+    deductionOpacity.setValue(1);
+    deductionOffset.setValue(0);
+    Animated.parallel([
+      Animated.timing(deductionOpacity, { toValue: 0, duration: 1100, delay: 500, useNativeDriver: true }),
+      Animated.timing(deductionOffset, { toValue: -28, duration: 1600, useNativeDriver: true }),
+    ]).start(() => setDeductedPoints(null));
+  };
 
   const buyReward = async (reward: (typeof REWARDS)[number]) => {
     try {
       await redeem({ owner: username ?? "", rewardId: reward.id, rewardName: reward.name, cost: reward.cost });
+      showDeduction(reward.cost);
       Alert.alert("Reward redeemed!", `${reward.name} is ready for you to enjoy.`);
     } catch {
       Alert.alert("Not enough points", "Complete more tasks before redeeming this reward.");
@@ -41,6 +56,7 @@ export default function RewardsScreen() {
         <LinearGradient colors={["#dcfce7", "#bbf7d0"]} style={styles.balanceCard}>
           <View><Text style={styles.balanceLabel}>YOUR AVAILABLE POINTS</Text><Text style={styles.balanceValue}>{summary?.available ?? 0} Points</Text></View>
           <Ionicons name="trophy" size={38} color="#eab308" />
+          {deductedPoints !== null && <Animated.Text style={[styles.deductionText, { opacity: deductionOpacity, transform: [{ translateY: deductionOffset }] }]}>−{deductedPoints} pts</Animated.Text>}
         </LinearGradient>
         <Text style={styles.sectionTitle}>Featured Rewards</Text>
         <View style={styles.rewardsGrid}>{REWARDS.map((reward) => <View key={reward.id} style={styles.rewardCard}>

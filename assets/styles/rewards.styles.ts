@@ -12,6 +12,7 @@ export const createRewardsStyles = (colors: ColorScheme) => StyleSheet.create({
   balanceCard: { borderRadius: 20, padding: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 28 },
   balanceLabel: { color: "#166534", fontSize: 14, fontWeight: "700" },
   balanceValue: { color: "#14532d", fontSize: 27, fontWeight: "900", marginTop: 2 },
+  deductionText: { position: "absolute", right: 18, top: 12, color: "#dc2626", fontSize: 18, fontWeight: "900" },
   sectionTitle: { color: colors.text, fontSize: 20, fontWeight: "800", marginBottom: 14 },
   rewardsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   rewardCard: { width: "47.5%", backgroundColor: colors.surface, borderRadius: 19, padding: 15, borderWidth: 1, borderColor: colors.border, minHeight: 190 },

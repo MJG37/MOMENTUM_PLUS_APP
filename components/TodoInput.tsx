@@ -14,14 +14,18 @@ const TodoInput = () => {
   const { username } = useAuth();
 
   const [newTodo, setNewTodo] = useState("");
-  const [points, setPoints] = useState(10);
+  const [minutes, setMinutes] = useState("15");
+  const [isCreating, setIsCreating] = useState(false);
   const addTodo = useMutation(api.todos.addTodo);
 
   const handleAddTodo = async() => {
     if(newTodo.trim()) {
       try {
+        const points = Math.max(1, Number.parseInt(minutes, 10) || 1);
         await addTodo({text:newTodo.trim(), points, owner: username ?? ""})
         setNewTodo("") // Repeats loop by adding new task using an empty string
+        setMinutes("15");
+        setIsCreating(false);
       } catch (error) { // Finds any errors
         console.log("Error adding a todo", error); // adds error to console for debugging purposes
         Alert.alert("Error", "Failed to add todo"); // When error found, message ALERT when there is an error when addTodo has failed
@@ -37,7 +41,11 @@ const TodoInput = () => {
           style={homeStyles.input}
           placeholder="What needs to be done?"
           value={newTodo}
-          onChangeText={setNewTodo}
+          onChangeText={(value) => {
+            setNewTodo(value);
+            if (value) setIsCreating(true);
+          }}
+          onFocus={() => setIsCreating(true)}
           onSubmitEditing={handleAddTodo}
           placeholderTextColor={colors.textMuted}
         />
@@ -50,20 +58,23 @@ const TodoInput = () => {
           </LinearGradient>
         </TouchableOpacity>
     </View>
-    <View style={homeStyles.pointPicker}>
-      <Text style={homeStyles.pointPickerLabel}>Points when completed</Text>
-      <View style={homeStyles.pointOptions}>
-        {[10, 20, 40].map((value) => (
-          <TouchableOpacity
-            key={value}
-            onPress={() => setPoints(value)}
-            style={[homeStyles.pointOption, points === value && { backgroundColor: colors.primary, borderColor: colors.primary }]}
-          >
-            <Text style={[homeStyles.pointOptionText, points === value && { color: "#ffffff" }]}>{value} pts</Text>
-          </TouchableOpacity>
-        ))}
+    {isCreating && <View style={homeStyles.durationSection}>
+      <Text style={homeStyles.durationPrompt}>How long will this task take?</Text>
+      <View style={homeStyles.durationRow}>
+        <TextInput
+          value={minutes}
+          onChangeText={setMinutes}
+          keyboardType="number-pad"
+          maxLength={3}
+          style={homeStyles.durationInput}
+          placeholder="Minutes"
+          placeholderTextColor={colors.textMuted}
+        />
+        <Text style={homeStyles.durationUnit}>minutes</Text>
+        <View style={homeStyles.durationPoints}><Ionicons name="trophy" size={16} color={colors.success} /><Text style={homeStyles.durationPointsText}>{Math.max(1, Number.parseInt(minutes, 10) || 1)} pts</Text></View>
       </View>
-    </View>
+      <Text style={homeStyles.durationHint}>1 minute = 1 point</Text>
+    </View>}
     </View>
   );
 };
