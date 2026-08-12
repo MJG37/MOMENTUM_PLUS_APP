@@ -17,6 +17,7 @@ export default function RootLayout() {
             <Stack.Screen name="how-it-works" options={{ title: "How it works" }} />
             <Stack.Screen name="login" />
             <Stack.Screen name="signup" />
+            <Stack.Screen name="authentication-questions" />
             <Stack.Screen name="(tabs)" options={{ title: "Home" }} />
           </Stack>
         </AuthProvider>

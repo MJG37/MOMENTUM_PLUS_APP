@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
-import useTheme from '@/hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -31,7 +31,7 @@ export default function SignupScreen() {
     setLoading(false);
 
     if (result.success) {
-      router.replace('/(tabs)');
+      router.replace('/authentication-questions?mode=setup');
     } else {
       Alert.alert('Signup failed', result.message ?? 'Unable to create account.');
     }

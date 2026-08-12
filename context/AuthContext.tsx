@@ -1,12 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "@/convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 const USERS_KEY = "@MomentumApp:users";
 const CURRENT_USER_KEY = "@MomentumApp:currentUser";
+// Versioned so existing installs retry the safe one-time cloud migration.
+const LOCAL_ACCOUNTS_MIGRATED_KEY = "@MomentumApp:localAccountsMigrated:v2";
 
 interface User {
   username: string;
   password: string;
+  securityAnswers?: {
+    birthday: string;
+    country: string;
+    favouriteColor: string;
+  };
 }
 
 interface AuthContextType {
@@ -17,6 +26,9 @@ interface AuthContextType {
   signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   clearAllData: () => Promise<void>;
+  deleteCurrentAccount: () => Promise<void>;
+  saveSecurityAnswers: (answers: NonNullable<User["securityAnswers"]>) => Promise<void>;
+  verifyAndResetPassword: (username: string, answers: NonNullable<User["securityAnswers"]>, newPassword: string) => Promise<{ success: boolean }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -64,17 +76,37 @@ const getUsers = async (): Promise<User[]> => {
   }
 };
 
-const setUsers = async (users: User[]) => {
-  await safeSetItem(USERS_KEY, JSON.stringify(users));
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const migrateLocalAccounts = useMutation(api.accounts.migrateLocalAccounts);
+  const loginAccount = useMutation(api.accounts.login);
+  const signupAccount = useMutation(api.accounts.signup);
+  const saveAnswers = useMutation(api.accounts.saveSecurityAnswers);
+  const resetPassword = useMutation(api.accounts.resetPassword);
+  const deleteAccount = useMutation(api.accounts.deleteAccount);
+  const sessionAccount = useQuery(
+    api.accounts.getByUsername,
+    username ? { username } : "skip"
+  );
+
+  useEffect(() => {
+    if (username && sessionAccount === null) {
+      setUsername(null);
+      void safeRemoveItem(CURRENT_USER_KEY);
+    }
+  }, [sessionAccount, username]);
 
   useEffect(() => {
     const loadSession = async () => {
       try {
+        const migrated = await safeGetItem(LOCAL_ACCOUNTS_MIGRATED_KEY);
+        if (!migrated) {
+          const users = await getUsers();
+          await migrateLocalAccounts({ accounts: users });
+          await safeSetItem(LOCAL_ACCOUNTS_MIGRATED_KEY, "true");
+        }
+
         const storedUser = await safeGetItem(CURRENT_USER_KEY);
         if (storedUser) {
           setUsername(storedUser);
@@ -87,64 +119,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     loadSession();
-  }, []);
+  }, [migrateLocalAccounts]);
 
   const login = async (usernameInput: string, passwordInput: string) => {
-    const normalizedUsername = usernameInput.trim().toLowerCase();
-    const normalizedPassword = passwordInput.trim();
-    const users = await getUsers();
-
-    const user = users.find(
-      (u) => u.username.trim().toLowerCase() === normalizedUsername
-    );
-
-    if (!user) {
-      return {
-        success: false,
-        message: "Account not found. Please check your name or sign up.",
-      };
+    try {
+      const account = await loginAccount({ username: usernameInput, password: passwordInput });
+      setUsername(account.username);
+      await safeSetItem(CURRENT_USER_KEY, account.username);
+      return { success: true };
+    } catch {
+      return { success: false, message: "Incorrect name or password. Please try again." };
     }
-
-    if (user.password.trim() !== normalizedPassword) {
-      return {
-        success: false,
-        message: "Incorrect password. Please try again.",
-      };
-    }
-
-    setUsername(user.username);
-    await safeSetItem(CURRENT_USER_KEY, user.username);
-    return { success: true };
   };
 
   const signup = async (usernameInput: string, passwordInput: string) => {
-    const displayUsername = usernameInput.trim();
-    const normalizedUsername = displayUsername.toLowerCase();
-    const normalizedPassword = passwordInput.trim();
-    const users = await getUsers();
-
-    const userExists = users.some(
-      (u) => u.username.trim().toLowerCase() === normalizedUsername
-    );
-
-    if (userExists) {
-      return {
-        success: false,
-        message: "An account already exists with that name.",
-      };
+    try {
+      const account = await signupAccount({ username: usernameInput, password: passwordInput });
+      setUsername(account.username);
+      await safeSetItem(CURRENT_USER_KEY, account.username);
+      return { success: true };
+    } catch {
+      return { success: false, message: "An account already exists with that name." };
     }
-
-    const newUser: User = {
-      username: displayUsername,
-      password: normalizedPassword,
-    };
-
-    const nextUsers = [...users, newUser];
-    await setUsers(nextUsers);
-    setUsername(displayUsername);
-    await safeSetItem(CURRENT_USER_KEY, displayUsername);
-
-    return { success: true };
   };
 
   const logout = async () => {
@@ -154,8 +150,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAllData = async () => {
     setUsername(null);
-    await safeRemoveItem(USERS_KEY);
     await safeRemoveItem(CURRENT_USER_KEY);
+  };
+
+  const deleteCurrentAccount = async () => {
+    if (!username) return;
+    await deleteAccount({ username });
+    setUsername(null);
+    await safeRemoveItem(CURRENT_USER_KEY);
+  };
+
+  const saveSecurityAnswers = async (answers: NonNullable<User["securityAnswers"]>) => {
+    if (!username) return;
+    await saveAnswers({ username, answers });
+  };
+
+  const verifyAndResetPassword = async (
+    usernameInput: string,
+    answers: NonNullable<User["securityAnswers"]>,
+    newPassword: string
+  ) => {
+    try {
+      await resetPassword({ username: usernameInput, answers, newPassword });
+      return { success: true };
+    } catch {
+      return { success: false };
+    }
   };
 
   return (
@@ -168,6 +188,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signup,
         logout,
         clearAllData,
+        deleteCurrentAccount,
+        saveSecurityAnswers,
+        verifyAndResetPassword,
       }}
     >
       {children}

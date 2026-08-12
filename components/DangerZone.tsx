@@ -1,7 +1,7 @@
 import { createSettingsStyles } from '@/assets/styles/settings.styles';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/convex/_generated/api';
-import useTheme from '@/hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { useMutation, useQuery } from 'convex/react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,7 +11,7 @@ import { Alert, Text, TouchableOpacity, View } from 'react-native';
 const DangerZone = () => {
 
   const { colors } = useTheme();
-  const { logout, username } = useAuth();
+  const { logout, username, deleteCurrentAccount } = useAuth();
   const router = useRouter();
 
   // Create the settings styles using the current color scheme
@@ -73,6 +73,28 @@ const DangerZone = () => {
     ]);
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "This permanently deletes your account, tasks, rewards, and points across all devices.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Account",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteCurrentAccount();
+              router.dismissAll();
+            } catch {
+              Alert.alert("Error", "Your account could not be deleted. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <LinearGradient colors={colors.gradients.surface} style={settingsStyles.section}>
       <Text style={settingsStyles.sectionTitle}>Danger Zone</Text>
@@ -98,9 +120,22 @@ const DangerZone = () => {
       >
         <View style={settingsStyles.actionLeft}>
           <LinearGradient colors={colors.gradients.danger} style={settingsStyles.actionIcon}>
-            <Ionicons name="trash" size={18} color="#ffffff" />
+            <Ionicons name="warning" size={18} color="#ffffff" />
           </LinearGradient>
           <Text style={settingsStyles.actionTextDanger}>Reset App</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[settingsStyles.actionButton, { marginTop: 16, borderBottomWidth: 0 }]}
+        onPress={handleDeleteAccount}
+        activeOpacity={0.7}
+      >
+        <View style={settingsStyles.actionLeft}>
+          <LinearGradient colors={colors.gradients.danger} style={settingsStyles.actionIcon}>
+            <Ionicons name="person-remove" size={18} color="#ffffff" />
+          </LinearGradient>
+          <Text style={settingsStyles.actionTextDanger}>Delete Account</Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
       </TouchableOpacity>
