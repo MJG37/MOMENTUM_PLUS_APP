@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router'
-import { View, Text } from 'react-native'
 import {Ionicons} from "@expo/vector-icons"
-import useTheme from '@/hooks/useTheme'
+import { useTheme } from '@/hooks/useTheme'
 
 // Responsible for bottom tab navigation layout
 const TabsLayout = () => {
@@ -35,6 +34,16 @@ const TabsLayout = () => {
             title:"Todos",
             tabBarIcon: ({color,size}) => (
                 <Ionicons name="flash-outline" size={size} color={color} />
+            )
+            }}
+        />
+
+        <Tabs.Screen
+            name='rewards'
+            options={{
+            title:"Rewards",
+            tabBarIcon: ({color,size}) => (
+                <Ionicons name="gift" size={size} color={color} />
             )
             }}
         />

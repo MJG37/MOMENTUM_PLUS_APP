@@ -25,7 +25,8 @@ export default function Index() {
 
   const homeStyles = createHomeStyles(colors); // Get createHomeStyles function based on the current color scheme
 
-    const todos = useQuery(api.todos.getTodos); // Get the useQuery function to fetch any new todos
+    const todos = useQuery(api.todos.getTodos, { owner: username ?? "" });
+    const pointsSummary = useQuery(api.rewards.getSummary, { owner: username ?? "" });
     const toggleTodo = useMutation(api.todos.toggleTodo);
     const deleteTodo = useMutation(api.todos.deleteTodo);
     const updateTodo = useMutation(api.todos.updateTodo);
@@ -141,6 +142,10 @@ export default function Index() {
                 >
                   {item.text}
                 </Text>
+                <View style={homeStyles.taskPointsBadge}>
+                  <Ionicons name="trophy" size={13} color={colors.success} />
+                  <Text style={homeStyles.taskPointsText}>{item.points ?? 10} pts</Text>
+                </View>
                 </View>
               )}
 
@@ -177,15 +182,28 @@ export default function Index() {
 
         <TodoInput/>
 
-        <FlatList
-          data={todos}
-          renderItem={renderTodoItem}
-          keyExtractor={(item) => item._id}
-          style={homeStyles.todoList}
-          contentContainerStyle={homeStyles.todoListContent }
-          ListEmptyComponent={<EmptyState />}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={homeStyles.todoList}>
+          <FlatList
+            data={todos}
+            renderItem={renderTodoItem}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={homeStyles.todoListContent }
+            ListEmptyComponent={<EmptyState />}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+        <LinearGradient colors={["#dcfce7", "#bbf7d0"]} style={homeStyles.pointsCard}>
+          <View style={homeStyles.pointsCardLeft}>
+            <LinearGradient colors={colors.gradients.success} style={homeStyles.pointsCardIcon}>
+              <Ionicons name="gift" size={22} color="#ffffff" />
+            </LinearGradient>
+            <View>
+              <Text style={homeStyles.pointsCardTitle}>{pointsSummary?.available ?? 0} Points available</Text>
+              <Text style={homeStyles.pointsCardSubtitle}>Complete tasks to earn more!</Text>
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={22} color="#166534" />
+        </LinearGradient>
       </SafeAreaView>
     </LinearGradient>
   );

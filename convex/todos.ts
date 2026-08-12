@@ -2,19 +2,22 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const getTodos = query({
-    handler: async (ctx) => {
+    args: { owner: v.optional(v.string()) },
+    handler: async (ctx, args) => {
         const todos = await ctx.db.query("todos").order("desc").collect()
-        return todos;
+        return todos.filter((todo) => !todo.owner || todo.owner === args.owner);
     },
 });
 
 // responsible for adding a new todo to the database
 export const addTodo = mutation({
-    args: {text:v.string()},
+    args: {text:v.string(), points: v.number(), owner: v.string()},
     handler: async(ctx,args) => {
         const todoID = await ctx.db.insert("todos", {
             text: args.text,
             isCompleted: false,
+            points: args.points,
+            owner: args.owner,
         });
 
         return todoID;
@@ -57,8 +60,11 @@ export const updateTodo = mutation({
 
 // responsible clearing ALL todos in the database
 export const clearAllTodos = mutation({
-    handler: async(ctx) => {
-       const todos = await ctx.db.query("todos").collect();
+    args: { owner: v.string() },
+    handler: async(ctx, args) => {
+       const todos = (await ctx.db.query("todos").collect()).filter(
+        (todo) => todo.owner === args.owner
+       );
 
        // Delete ALL todos
        for (const todo of todos) {

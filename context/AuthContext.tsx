@@ -118,7 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signup = async (usernameInput: string, passwordInput: string) => {
-    const normalizedUsername = usernameInput.trim().toLowerCase();
+    const displayUsername = usernameInput.trim();
+    const normalizedUsername = displayUsername.toLowerCase();
     const normalizedPassword = passwordInput.trim();
     const users = await getUsers();
 
@@ -134,14 +135,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const newUser: User = {
-      username: normalizedUsername,
+      username: displayUsername,
       password: normalizedPassword,
     };
 
     const nextUsers = [...users, newUser];
     await setUsers(nextUsers);
-    setUsername(normalizedUsername);
-    await safeSetItem(CURRENT_USER_KEY, normalizedUsername);
+    setUsername(displayUsername);
+    await safeSetItem(CURRENT_USER_KEY, displayUsername);
 
     return { success: true };
   };

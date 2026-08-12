@@ -1,6 +1,7 @@
 import { createSettingsStyles } from '@/assets/styles/settings.styles';
 import { api } from '@/convex/_generated/api';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from 'convex/react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,8 +10,9 @@ import { Text, View } from 'react-native';
 const ProgressStats = () => {
     const {colors} = useTheme();
   const settingsStyles = createSettingsStyles(colors);
+  const { username } = useAuth();
 
-  const todos= useQuery(api.todos.getTodos)
+  const todos= useQuery(api.todos.getTodos, { owner: username ?? "" })
   const totalTodos= todos? todos.length : 0;
   const completedTodos = todos ? todos.filter((todo) => todo.isCompleted).length : 0;
   const activeTodos = totalTodos - completedTodos;

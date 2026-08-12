@@ -11,7 +11,7 @@ import { Alert, Text, TouchableOpacity, View } from 'react-native';
 const DangerZone = () => {
 
   const { colors } = useTheme();
-  const { logout } = useAuth();
+  const { logout, username } = useAuth();
   const router = useRouter();
 
   // Create the settings styles using the current color scheme
@@ -19,7 +19,7 @@ const DangerZone = () => {
 
   // Prepare a Convex mutation function that calls the server-side `clearAllTodos` mutation. Calling `clearAllTodos()` will run the server code to remove all todo documents and return a result object.
   const clearAllTodos = useMutation(api.todos.clearAllTodos);
-  const todos = useQuery(api.todos.getTodos);
+  const todos = useQuery(api.todos.getTodos, { owner: username ?? "" });
 
   // Handler invoked when the user chooses to reset the app.
   // This shows a confirmation Alert with destructive action.
@@ -40,7 +40,7 @@ const DangerZone = () => {
               // Keep a local count of todos before clearing them, since Convex
               // mutations may not preserve returned payloads on the client.
               const deletedCount = todos?.length ?? 0;
-              await clearAllTodos();
+              await clearAllTodos({ owner: username ?? "" });
 
               // Inform the user how many todos were removed. The server
               // is expected to return an object with deletedCount
