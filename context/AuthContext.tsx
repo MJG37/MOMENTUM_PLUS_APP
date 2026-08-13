@@ -28,6 +28,7 @@ interface AuthContextType {
   signup: (username: string, password: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   clearAllData: () => Promise<void>;
+  cancelSignup: () => Promise<void>;
   deleteCurrentAccount: () => Promise<void>;
   saveSecurityAnswers: (answers: NonNullable<User["securityAnswers"]>) => Promise<void>;
   verifyAndResetPassword: (username: string, answers: NonNullable<User["securityAnswers"]>, newPassword: string) => Promise<{ success: boolean }>;
@@ -93,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (username && sessionAccount === null) {
+    if (username && username !== GUEST_USERNAME && sessionAccount === null) {
       setUsername(null);
       void safeRemoveItem(CURRENT_USER_KEY);
     }
@@ -158,6 +159,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await safeRemoveItem(CURRENT_USER_KEY);
   };
 
+  const cancelSignup = async () => {
+    if (username && username !== GUEST_USERNAME) await deleteAccount({ username });
+    setUsername(null);
+    await safeRemoveItem(CURRENT_USER_KEY);
+  };
+
   const clearAllData = async () => {
     setUsername(null);
     await safeRemoveItem(CURRENT_USER_KEY);
@@ -181,8 +188,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     newPassword: string
   ) => {
     try {
-      await resetPassword({ username: usernameInput, answers, newPassword });
-      return { success: true };
+      const result = await resetPassword({ username: usernameInput, answers, newPassword });
+      return { success: result.status === "reset" };
     } catch {
       return { success: false };
     }
@@ -198,6 +205,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signup,
         logout,
         clearAllData,
+        cancelSignup,
         deleteCurrentAccount,
         saveSecurityAnswers,
         verifyAndResetPassword,

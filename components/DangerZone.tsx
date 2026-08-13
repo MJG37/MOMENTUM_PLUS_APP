@@ -10,7 +10,7 @@ import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 const DangerZone = () => {
 
-  const { colors } = useTheme();
+  const { colors, resetTheme } = useTheme();
   const { logout, username, deleteCurrentAccount } = useAuth();
   const router = useRouter();
 
@@ -67,6 +67,7 @@ const DangerZone = () => {
         style: 'destructive',
         onPress: async () => {
           await logout();
+          resetTheme();
           router.dismissAll();
         },
       },
@@ -85,6 +86,7 @@ const DangerZone = () => {
           onPress: async () => {
             try {
               await deleteCurrentAccount();
+              resetTheme();
               router.dismissAll();
             } catch {
               Alert.alert("Error", "Your account could not be deleted. Please try again.");

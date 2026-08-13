@@ -22,6 +22,7 @@ export default function Index() {
 
   const [editingId, setEditingId] = useState<Id<"todos"> | null>(null);
   const [editText, setEditText] = useState("");
+  const [editMinutes, setEditMinutes] = useState("");
 
   const homeStyles = createHomeStyles(colors); // Get createHomeStyles function based on the current color scheme
 
@@ -55,6 +56,7 @@ export default function Index() {
     //Responsible for "edit" todo function
     const handleEditTodo = (todo:Todo) => {
       setEditText(todo.text)
+      setEditMinutes(String(todo.points ?? 10));
       setEditingId(todo._id)
     }
     
@@ -62,12 +64,17 @@ export default function Index() {
     const handleSaveEdit = async () => {
         if (editingId) {
           try {
-            await updateTodo({ id: editingId, text: editText.trim() });
+            const points = Number.parseInt(editMinutes, 10);
+            if (!editText.trim() || !Number.isInteger(points) || points < 1 || points > 300) {
+              Alert.alert("Check your task", "Enter a task name and 1–300 minutes.");
+              return;
+            }
+            await updateTodo({ id: editingId, text: editText.trim(), points });
             setEditingId(null);
             setEditText("");
           } catch (error) {
             console.log("Error updating todo", error);
-            Alert.alert("Error", "Failed to update todo");
+            Alert.alert("Could not save task", "Completed task points cannot be changed. You can still edit its name.");
           }
         }
     }
@@ -76,6 +83,7 @@ export default function Index() {
     const handleCancelEdit = () => {
         setEditingId(null);
         setEditText("");
+        setEditMinutes("");
     }
 
     // RETURN STATEMENT: Responsible for the todo "boxes" and buttons
@@ -110,6 +118,7 @@ export default function Index() {
                   placeholder="Edit your todo..."
                   placeholderTextColor={colors.textMuted}
                 />
+                <View style={homeStyles.editMinutesRow}><TextInput style={homeStyles.editMinutesInput} value={editMinutes} onChangeText={setEditMinutes} keyboardType="number-pad" maxLength={3} editable={!item.isCompleted} /><Text style={homeStyles.editMinutesLabel}>{item.isCompleted ? "points are locked once completed" : "minutes / points"}</Text></View>
                 <View style={homeStyles.editButtons}> 
                   <TouchableOpacity onPress={handleSaveEdit} activeOpacity={0.8}>
                     <LinearGradient colors={colors.gradients.success} style={homeStyles.editButton}>

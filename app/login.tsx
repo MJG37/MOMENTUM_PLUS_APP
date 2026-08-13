@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
@@ -41,7 +41,8 @@ export default function LoginScreen() {
     <View style={[styles.container, { backgroundColor: colors.bg }]}> 
       <StatusBar barStyle={colors.statusBarStyle} />
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inner}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboard}><ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/how-it-works')}><Ionicons name="arrow-back" size={23} color={colors.text} /></TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>Welcome back</Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>Log in to continue your Momentum+ tasks.</Text>
 
@@ -98,11 +99,11 @@ export default function LoginScreen() {
               <Text style={styles.buttonText}>{loading ? 'Signing in…' : 'Log In'}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/signup')}>
+            <TouchableOpacity onPress={() => router.replace('/signup')}>
               <Text style={[styles.linkText, { color: colors.primary }]}>Don&apos;t have an account? Sign up</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </ScrollView></KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );
@@ -171,5 +172,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
+  keyboard: { flex: 1 },
+  backButton: { width: 44, height: 44, justifyContent: 'center' },
   forgotText: { textAlign: 'right', fontSize: 14, fontWeight: '700', marginTop: -6 },
 });

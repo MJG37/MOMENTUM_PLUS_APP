@@ -31,4 +31,8 @@ export default defineSchema ({
         description: v.string(),
         cost: v.number(),
     }).index("by_owner", ["owner"]),
+    rewardPreferences: defineTable({
+        owner: v.string(),
+        hiddenRewardIds: v.array(v.string()),
+    }).index("by_owner", ["owner"]),
 });

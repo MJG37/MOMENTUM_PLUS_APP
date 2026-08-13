@@ -263,6 +263,9 @@ export const createHomeStyles = (colors: ColorScheme) => {
       flexDirection: "row",
       gap: 12,
     },
+    editMinutesRow: { flexDirection: "row", alignItems: "center", gap: 9, marginBottom: 14 },
+    editMinutesInput: { width: 68, borderWidth: 1, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 9, paddingVertical: 8, color: colors.text, backgroundColor: colors.backgrounds.input, fontWeight: "800", textAlign: "center" },
+    editMinutesLabel: { flex: 1, color: colors.textMuted, fontSize: 12, fontWeight: "600" },
     editButton: {
       flexDirection: "row",
       alignItems: "center",

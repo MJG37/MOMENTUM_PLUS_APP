@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignupScreen() {
@@ -25,6 +25,10 @@ export default function SignupScreen() {
       Alert.alert('Missing password', 'Please create a password.');
       return;
     }
+    if (password.length < 4 || !/[^A-Za-z0-9]/.test(password)) {
+      Alert.alert('Choose a stronger password', 'Your password needs at least 4 characters and 1 symbol.');
+      return;
+    }
 
     setLoading(true);
     const result = await signup(username, password);
@@ -41,7 +45,8 @@ export default function SignupScreen() {
     <View style={[styles.container, { backgroundColor: colors.bg }]}> 
       <StatusBar barStyle={colors.statusBarStyle} />
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inner}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboard}><ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
+          <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/how-it-works')}><Ionicons name="arrow-back" size={23} color={colors.text} /></TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>Create Account</Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>Sign up to start tracking your Momentum+ tasks.</Text>
 
@@ -86,11 +91,11 @@ export default function SignupScreen() {
               <Text style={styles.buttonText}>{loading ? 'Creating account…' : 'Sign Up'}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/login')}>
+            <TouchableOpacity onPress={() => router.replace('/login')}>
               <Text style={[styles.linkText, { color: colors.primary }]}>Already have an account? Log in</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </ScrollView></KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );
@@ -108,6 +113,8 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
   },
+  keyboard: { flex: 1 },
+  backButton: { width: 44, height: 44, justifyContent: 'center' },
   title: {
     fontSize: 32,
     fontWeight: '900',

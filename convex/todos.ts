@@ -13,6 +13,7 @@ export const getTodos = query({
 export const addTodo = mutation({
     args: {text:v.string(), points: v.number(), owner: v.string()},
     handler: async(ctx,args) => {
+        if (!args.text.trim() || !Number.isInteger(args.points) || args.points < 1 || args.points > 300) throw new ConvexError("Tasks must have a name and take between 1 and 300 minutes.");
         const todoID = await ctx.db.insert("todos", {
             text: args.text,
             isCompleted: false,
@@ -50,11 +51,14 @@ export const updateTodo = mutation({
     args: {
         id: v.id("todos"),
         text: v.string(),
+        points: v.number(),
     },
     handler: async (ctx, args) => {
-        await ctx.db.patch(args.id, { 
-            text: args.text, 
-        });
+        const todo = await ctx.db.get(args.id);
+        if (!todo) throw new ConvexError("Todo not found.");
+        if (!args.text.trim() || !Number.isInteger(args.points) || args.points < 1 || args.points > 300) throw new ConvexError("Use 1–300 minutes.");
+        if (todo.isCompleted && todo.points !== args.points) throw new ConvexError("Completed task points cannot be changed.");
+        await ctx.db.patch(args.id, { text: args.text.trim(), points: args.points });
     },
 });
 

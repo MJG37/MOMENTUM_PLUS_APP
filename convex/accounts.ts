@@ -53,8 +53,9 @@ export const resetPassword = mutation({
     const account = await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", usernameKey(args.username))).unique();
     const saved = account?.securityAnswers;
     const matches = saved && saved.birthday === args.answers.birthday && saved.country === args.answers.country && saved.favouriteColor.trim().toLowerCase() === args.answers.favouriteColor.trim().toLowerCase();
-    if (!account || !matches) throw new ConvexError("Authentication failed.");
+    if (!account || !matches) return { status: "authentication_failed" as const };
     await ctx.db.patch(account._id, { password: args.newPassword.trim() });
+    return { status: "reset" as const };
   },
 });
 
@@ -77,8 +78,12 @@ export const deleteAccount = mutation({
     if (!account) throw new ConvexError("Account not found.");
     const todos = await ctx.db.query("todos").collect();
     const redemptions = await ctx.db.query("redemptions").withIndex("by_owner", q => q.eq("owner", account.username)).collect();
+    const customRewards = await ctx.db.query("customRewards").withIndex("by_owner", q => q.eq("owner", account.username)).collect();
+    const preferences = await ctx.db.query("rewardPreferences").withIndex("by_owner", q => q.eq("owner", account.username)).collect();
     for (const todo of todos.filter(todo => todo.owner === account.username)) await ctx.db.delete(todo._id);
     for (const redemption of redemptions) await ctx.db.delete(redemption._id);
+    for (const reward of customRewards) await ctx.db.delete(reward._id);
+    for (const preference of preferences) await ctx.db.delete(preference._id);
     await ctx.db.delete(account._id);
   },
 });

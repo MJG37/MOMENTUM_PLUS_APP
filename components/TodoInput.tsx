@@ -21,7 +21,11 @@ const TodoInput = () => {
   const handleAddTodo = async() => {
     if(newTodo.trim()) {
       try {
-        const points = Math.max(1, Number.parseInt(minutes, 10) || 1);
+        const points = Number.parseInt(minutes, 10);
+        if (!Number.isInteger(points) || points < 1 || points > 300) {
+          Alert.alert("Check the task time", "Enter a whole number from 1 to 300 minutes (up to 5 hours).");
+          return;
+        }
         await addTodo({text:newTodo.trim(), points, owner: username ?? ""})
         setNewTodo("") // Repeats loop by adding new task using an empty string
         setMinutes("15");
@@ -73,7 +77,7 @@ const TodoInput = () => {
         <Text style={homeStyles.durationUnit}>minutes</Text>
         <View style={homeStyles.durationPoints}><Ionicons name="trophy" size={16} color={colors.success} /><Text style={homeStyles.durationPointsText}>{Math.max(1, Number.parseInt(minutes, 10) || 1)} pts</Text></View>
       </View>
-      <Text style={homeStyles.durationHint}>1 minute = 1 point</Text>
+      <Text style={homeStyles.durationHint}>1 minute = 1 point · Maximum 300 minutes (5 hours)</Text>
     </View>}
     </View>
   );

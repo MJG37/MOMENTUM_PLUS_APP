@@ -31,6 +31,12 @@ export const listCustomRewards = query({
       .collect(),
 });
 
+export const getPreferences = query({
+  args: { owner: v.string() },
+  handler: async (ctx, args) =>
+    await ctx.db.query("rewardPreferences").withIndex("by_owner", (q) => q.eq("owner", args.owner)).unique(),
+});
+
 export const addCustomReward = mutation({
   args: { owner: v.string(), name: v.string(), description: v.string(), cost: v.number() },
   handler: async (ctx, args) => {
@@ -40,6 +46,49 @@ export const addCustomReward = mutation({
       throw new Error("Enter a reward name, description, and a whole-number point cost.");
     }
     return await ctx.db.insert("customRewards", { ...args, name, description });
+  },
+});
+
+export const updateCustomReward = mutation({
+  args: { id: v.id("customRewards"), owner: v.string(), name: v.string(), description: v.string(), cost: v.number() },
+  handler: async (ctx, args) => {
+    const reward = await ctx.db.get(args.id);
+    if (!reward || reward.owner !== args.owner) throw new Error("Reward not found.");
+    if (!args.name.trim() || !args.description.trim() || !Number.isInteger(args.cost) || args.cost < 1) throw new Error("Enter valid reward details.");
+    await ctx.db.patch(args.id, { name: args.name.trim(), description: args.description.trim(), cost: args.cost });
+  },
+});
+
+export const deleteCustomReward = mutation({
+  args: { id: v.id("customRewards"), owner: v.string() },
+  handler: async (ctx, args) => {
+    const reward = await ctx.db.get(args.id);
+    if (reward?.owner === args.owner) await ctx.db.delete(args.id);
+  },
+});
+
+export const hideBuiltInReward = mutation({
+  args: { owner: v.string(), rewardId: v.string() },
+  handler: async (ctx, args) => {
+    const preference = await ctx.db.query("rewardPreferences").withIndex("by_owner", (q) => q.eq("owner", args.owner)).unique();
+    const hiddenRewardIds = Array.from(new Set([...(preference?.hiddenRewardIds ?? []), args.rewardId]));
+    if (preference) await ctx.db.patch(preference._id, { hiddenRewardIds }); else await ctx.db.insert("rewardPreferences", { owner: args.owner, hiddenRewardIds });
+  },
+});
+
+export const restoreBuiltInRewards = mutation({
+  args: { owner: v.string() },
+  handler: async (ctx, args) => {
+    const preference = await ctx.db.query("rewardPreferences").withIndex("by_owner", (q) => q.eq("owner", args.owner)).unique();
+    if (preference) await ctx.db.patch(preference._id, { hiddenRewardIds: [] });
+  },
+});
+
+export const clearRedemptions = mutation({
+  args: { owner: v.string() },
+  handler: async (ctx, args) => {
+    const redemptions = await ctx.db.query("redemptions").withIndex("by_owner", (q) => q.eq("owner", args.owner)).collect();
+    for (const redemption of redemptions) await ctx.db.delete(redemption._id);
   },
 });
 
