@@ -1,3 +1,4 @@
+// Manages tasks and creates a permanent earning when a task is first completed.
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 

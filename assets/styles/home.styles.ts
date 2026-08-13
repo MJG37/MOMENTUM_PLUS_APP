@@ -1,3 +1,4 @@
+// Contains theme-aware styles for the task home screen.
 import { ColorScheme } from "@/hooks/useTheme";
 import { StyleSheet } from "react-native";
 

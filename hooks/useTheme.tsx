@@ -1,3 +1,4 @@
+// Provides one shared light or dark colour scheme to every screen.
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 export interface ColorScheme {

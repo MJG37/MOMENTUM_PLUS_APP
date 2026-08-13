@@ -1,3 +1,4 @@
+// Keeps account sessions in device storage and coordinates secure cloud account actions.
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
@@ -5,8 +6,6 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 
 const USERS_KEY = "@MomentumApp:users";
 const CURRENT_USER_KEY = "@MomentumApp:currentUser";
-const GUEST_USERNAME = "Guest";
-const GUEST_PASSWORD = "#Hello";
 // Versioned so existing installs retry the safe one-time cloud migration.
 const LOCAL_ACCOUNTS_MIGRATED_KEY = "@MomentumApp:localAccountsMigrated:v2";
 
@@ -94,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (username && username !== GUEST_USERNAME && sessionAccount === null) {
+    if (username && sessionAccount === null) {
       setUsername(null);
       void safeRemoveItem(CURRENT_USER_KEY);
     }
@@ -125,11 +124,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [migrateLocalAccounts]);
 
   const login = async (usernameInput: string, passwordInput: string) => {
-    if (usernameInput.trim().toLowerCase() === GUEST_USERNAME.toLowerCase() && passwordInput === GUEST_PASSWORD) {
-      setUsername(GUEST_USERNAME);
-      await safeSetItem(CURRENT_USER_KEY, GUEST_USERNAME);
-      return { success: true };
-    }
     try {
       const account = await loginAccount({ username: usernameInput, password: passwordInput });
       if (account.status !== "authenticated") {
@@ -146,6 +140,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (usernameInput: string, passwordInput: string) => {
     try {
       const account = await signupAccount({ username: usernameInput, password: passwordInput });
+      if (account.status === "duplicate") return { success: false, message: "An account already exists with that name." };
+      if (account.status === "weak_password") return { success: false, message: "Use at least 4 characters and 1 symbol." };
       setUsername(account.username);
       await safeSetItem(CURRENT_USER_KEY, account.username);
       return { success: true };
@@ -160,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const cancelSignup = async () => {
-    if (username && username !== GUEST_USERNAME) await deleteAccount({ username });
+    if (username) await deleteAccount({ username });
     setUsername(null);
     await safeRemoveItem(CURRENT_USER_KEY);
   };

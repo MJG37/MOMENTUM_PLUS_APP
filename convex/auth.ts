@@ -1,3 +1,4 @@
+// Configures the optional Convex authentication provider.
 import { Password } from "@convex-dev/auth/providers/Password";
 import { convexAuth } from "@convex-dev/auth/server";
 

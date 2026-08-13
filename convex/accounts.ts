@@ -1,3 +1,4 @@
+// Defines cloud account creation, sign-in, recovery, migration, and deletion rules.
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
@@ -19,11 +20,10 @@ export const signup = mutation({
   handler: async (ctx, args) => {
     const username = args.username.trim();
     const key = usernameKey(username);
-    if (await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", key)).unique()) {
-      throw new ConvexError("An account already exists with that name.");
-    }
+    if (await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", key)).unique()) return { status: "duplicate" as const };
+    if (args.password.trim().length < 4 || !/[^A-Za-z0-9]/.test(args.password)) return { status: "weak_password" as const };
     await ctx.db.insert("accounts", { username, usernameKey: key, password: args.password.trim() });
-    return { username };
+    return { status: "created" as const, username };
   },
 });
 

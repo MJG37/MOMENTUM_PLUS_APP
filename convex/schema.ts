@@ -1,3 +1,4 @@
+// Declares the cloud database tables and their indexes.
 import {defineSchema, defineTable } from "convex/server";
 
 import { v } from "convex/values";
@@ -29,6 +30,7 @@ export default defineSchema ({
         rewardId: v.string(),
         rewardName: v.string(),
         cost: v.number(),
+        hiddenFromHistory: v.optional(v.boolean()),
     }).index("by_owner", ["owner"]),
     customRewards: defineTable({
         owner: v.string(),

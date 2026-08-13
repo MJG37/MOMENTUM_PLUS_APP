@@ -1,3 +1,4 @@
+// Contains theme-aware styles shared by settings cards and controls.
 import { ColorScheme } from "@/hooks/useTheme";
 import { StyleSheet } from "react-native";
 

@@ -1,3 +1,4 @@
+// Contains theme-aware styles for reward cards and reward forms.
 import { ColorScheme } from "@/hooks/useTheme";
 import { StyleSheet } from "react-native";
 
@@ -17,14 +18,14 @@ export const createRewardsStyles = (colors: ColorScheme) => StyleSheet.create({
   rewardsHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   addRewardButton: { flexDirection: "row", alignItems: "center", gap: 3, borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7, marginBottom: 14 },
   addRewardText: { fontSize: 13, fontWeight: "800" },
-  rewardsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  rewardCard: { flexBasis: "47%", flexGrow: 1, backgroundColor: colors.surface, borderRadius: 19, padding: 15, borderWidth: 1, borderColor: colors.border, minHeight: 205 },
+  rewardsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, alignItems: "stretch" },
+  rewardCard: { flexBasis: "47%", flexGrow: 1, width: "48%", backgroundColor: colors.surface, borderRadius: 19, padding: 15, borderWidth: 1, borderColor: colors.border, minHeight: 205, alignSelf: "stretch" },
   rewardIcon: { width: 46, height: 46, borderRadius: 14, justifyContent: "center", alignItems: "center", marginBottom: 13 },
-  rewardName: { color: colors.text, fontSize: 16, fontWeight: "800", minHeight: 42 },
-  rewardDescription: { color: colors.textMuted, fontSize: 12, lineHeight: 17, marginTop: 5, flex: 1 },
-  rewardFooter: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 13 },
-  cost: { color: colors.success, fontSize: 14, fontWeight: "800" },
-  buyButton: { borderRadius: 12, paddingHorizontal: 11, paddingVertical: 8, alignItems: "center", minWidth: 72 },
+  rewardName: { color: colors.text, fontSize: 16, fontWeight: "800", minHeight: 42, flexShrink: 1 },
+  rewardDescription: { color: colors.textMuted, fontSize: 12, lineHeight: 17, marginTop: 5, flex: 1, minHeight: 40 },
+  rewardFooter: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, marginTop: 13 },
+  cost: { color: colors.success, fontSize: 14, fontWeight: "800", flexShrink: 1 },
+  buyButton: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, alignItems: "center", minWidth: 92, maxWidth: 120, flex: 1 },
   buyText: { color: "#ffffff", fontWeight: "800", fontSize: 12, textAlign: "center" },
   rewardManage: { flexDirection: "row", justifyContent: "flex-end", gap: 12, marginTop: 7 },
   history: { marginTop: 28 },

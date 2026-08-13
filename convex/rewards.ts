@@ -1,3 +1,4 @@
+// Calculates balances and manages reward redemption, history, and reward choices.
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
@@ -21,7 +22,13 @@ export const getSummary = query({
       .order("desc")
       .collect();
     const spent = redemptions.reduce((total, reward) => total + reward.cost, 0);
-    return { earned, spent, available: Math.max(0, earned - spent), redemptions };
+    return {
+      earned,
+      spent,
+      available: Math.max(0, earned - spent),
+      redemptions,
+      hiddenRedemptionCount: 0,
+    };
   },
 });
 
@@ -84,14 +91,6 @@ export const restoreBuiltInRewards = mutation({
   handler: async (ctx, args) => {
     const preference = await ctx.db.query("rewardPreferences").withIndex("by_owner", (q) => q.eq("owner", args.owner)).unique();
     if (preference) await ctx.db.patch(preference._id, { hiddenRewardIds: [] });
-  },
-});
-
-export const clearRedemptions = mutation({
-  args: { owner: v.string() },
-  handler: async (ctx, args) => {
-    const redemptions = await ctx.db.query("redemptions").withIndex("by_owner", (q) => q.eq("owner", args.owner)).collect();
-    for (const redemption of redemptions) await ctx.db.delete(redemption._id);
   },
 });
 

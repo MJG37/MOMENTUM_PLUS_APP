@@ -1,3 +1,4 @@
+// Supplies Convex Auth configuration values.
 export default {
   providers: [
     {

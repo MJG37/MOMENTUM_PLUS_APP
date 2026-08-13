@@ -40,7 +40,6 @@ export default function RewardsScreen() {
   const deleteCustomReward = useMutation(api.rewards.deleteCustomReward);
   const hideBuiltInReward = useMutation(api.rewards.hideBuiltInReward);
   const restoreBuiltInRewards = useMutation(api.rewards.restoreBuiltInRewards);
-  const clearRedemptions = useMutation(api.rewards.clearRedemptions);
   const [deductedPoints, setDeductedPoints] = useState<number | null>(null);
   const [purchasingRewardId, setPurchasingRewardId] = useState<string | null>(null);
   const deductionOpacity = useRef(new Animated.Value(0)).current;
@@ -110,7 +109,6 @@ export default function RewardsScreen() {
   const rewards: Reward[] = [...REWARDS.filter((reward) => !preferences?.hiddenRewardIds.includes(reward.id)), ...(customRewards ?? []).map((reward) => ({ id: reward._id, name: reward.name, description: reward.description, cost: reward.cost, icon: "sparkles" as const, color: "#14b8a6", isCustom: true }))];
   const openEditReward = (reward: NonNullable<typeof customRewards>[number]) => { setEditingRewardId(reward._id); setRewardName(reward.name); setRewardDescription(reward.description); setRewardCost(String(reward.cost)); setIsAddingReward(true); };
   const removeReward = (reward: Reward) => Alert.alert("Delete reward", `Remove ${reward.name}?`, [{ text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => reward.isCustom ? deleteCustomReward({ id: reward.id as Id<"customRewards">, owner: username ?? "" }) : hideBuiltInReward({ owner: username ?? "", rewardId: reward.id }) }]);
-  const clearHistory = () => Alert.alert("Clear redeemed rewards?", "This deletes the redeemed-reward history and returns those points to your available balance.", [{ text: "Cancel", style: "cancel" }, { text: "Clear history", style: "destructive", onPress: () => clearRedemptions({ owner: username ?? "" }) }]);
 
   return <LinearGradient colors={colors.gradients.background} style={styles.container}>
     <SafeAreaView style={styles.safeArea}>
@@ -131,7 +129,7 @@ export default function RewardsScreen() {
           <View style={styles.rewardManage}>{reward.isCustom && <TouchableOpacity onPress={() => openEditReward((customRewards ?? []).find((item) => item._id === reward.id)!)}><Ionicons name="pencil-outline" size={17} color={colors.textMuted} /></TouchableOpacity>}<TouchableOpacity onPress={() => removeReward(reward)}><Ionicons name="trash-outline" size={17} color={colors.danger} /></TouchableOpacity></View>
           <View style={styles.rewardFooter}><Text style={styles.cost}>{reward.cost} pts</Text><TouchableOpacity disabled={purchasingRewardId !== null || (summary?.available ?? 0) < reward.cost} onPress={() => buyReward(reward)}><LinearGradient colors={purchasingRewardId !== null || (summary?.available ?? 0) < reward.cost ? colors.gradients.muted : colors.gradients.primary} style={styles.buyButton}><Text style={styles.buyText}>{purchasingRewardId === reward.id ? "Buying…" : (summary?.available ?? 0) < reward.cost ? "Need points" : "Buy"}</Text></LinearGradient></TouchableOpacity></View>
         </View>)}</View>
-        <View style={styles.history}><View style={styles.historyHeading}><Text style={styles.sectionTitle}>Redeemed Rewards</Text>{summary?.redemptions.length ? <TouchableOpacity style={[styles.clearHistoryButton, { backgroundColor: colors.danger }]} onPress={clearHistory}><Ionicons name="trash-outline" size={16} color="#fff" /><Text style={styles.clearHistoryText}>Clear</Text></TouchableOpacity> : null}</View>
+        <View style={styles.history}><View style={styles.historyHeading}><Text style={styles.sectionTitle}>Redeemed Rewards</Text></View>
           {preferences?.hiddenRewardIds.length ? <TouchableOpacity onPress={() => restoreBuiltInRewards({ owner: username ?? "" })} style={[styles.restoreButton, { borderColor: colors.primary }]}><Ionicons name="refresh" size={16} color={colors.primary} /><Text style={[styles.restoreText, { color: colors.primary }]}>Restore featured rewards</Text></TouchableOpacity> : null}
           {summary?.redemptions.length ? summary.redemptions.map((item) => <View key={item._id} style={styles.historyCard}><Text style={styles.historyName}>{item.rewardName}</Text><Text style={styles.historyCost}>−{item.cost} pts</Text></View>) : <Text style={styles.emptyHistory}>No rewards redeemed yet.</Text>}
         </View>
