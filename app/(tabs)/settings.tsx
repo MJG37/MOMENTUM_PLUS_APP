@@ -2,6 +2,7 @@ import { createSettingsStyles } from "@/assets/styles/settings.styles";
 import DangerZone from "@/components/DangerZone";
 import Preferences from "@/components/Preferences";
 import ProgressStats from "@/components/ProgressStats";
+import PomodoroTimer from "@/components/PomodoroTimer";
 import useTheme from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -36,6 +37,7 @@ const SettingsScreen = () => {
         >
           {/* PROGRES STATS */}
           <ProgressStats />
+          <PomodoroTimer />
 
           {/* PREFERENCES */}
           <Preferences />

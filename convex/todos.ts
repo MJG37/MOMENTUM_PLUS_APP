@@ -32,9 +32,12 @@ export const toggleTodo = mutation({
         const todo = await ctx.db.get(args.id)
         if(!todo) throw new ConvexError("Todo not found")
 
-        await ctx.db.patch(args.id, {
-            isCompleted: !todo.isCompleted,
-        })
+        const isCompleted = !todo.isCompleted;
+        if (isCompleted) {
+          const existingEarning = await ctx.db.query("taskEarnings").withIndex("by_todo", (q) => q.eq("todoId", args.id)).unique();
+          if (!existingEarning) await ctx.db.insert("taskEarnings", { owner: todo.owner ?? "", todoId: args.id, points: todo.points ?? 10 });
+        }
+        await ctx.db.patch(args.id, { isCompleted })
     }
 })
 

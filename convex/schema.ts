@@ -19,6 +19,11 @@ export default defineSchema ({
         points: v.optional(v.number()),
         owner: v.optional(v.string()),
     }),
+    taskEarnings: defineTable({
+        owner: v.string(),
+        todoId: v.id("todos"),
+        points: v.number(),
+    }).index("by_owner", ["owner"]).index("by_todo", ["todoId"]),
     redemptions: defineTable({
         owner: v.string(),
         rewardId: v.string(),

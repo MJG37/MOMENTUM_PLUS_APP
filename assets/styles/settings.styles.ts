@@ -160,6 +160,19 @@ export const createSettingsStyles = (colors: ColorScheme) => {
       fontWeight: "600",
       color: colors.danger,
     },
+    pomodoroHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+    pomodoroTitle: { fontSize: 20, fontWeight: "700", color: colors.text },
+    pomodoroLabel: { color: colors.textMuted, fontSize: 12, fontWeight: "800" },
+    pomodoroTime: { color: colors.text, fontSize: 50, fontWeight: "900", textAlign: "center", marginVertical: 16, fontVariant: ["tabular-nums"] },
+    presetRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
+    presetButton: { flex: 1, borderWidth: 1, borderRadius: 10, paddingVertical: 9, alignItems: "center" },
+    presetText: { fontWeight: "800", fontSize: 13 },
+    pomodoroActions: { flexDirection: "row", gap: 10, justifyContent: "center", marginTop: 18 },
+    pomodoroStart: { flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
+    pomodoroStartText: { color: "#fff", fontWeight: "800" },
+    pomodoroReset: { flexDirection: "row", alignItems: "center", gap: 7, borderWidth: 1, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 12 },
+    pomodoroResetText: { fontWeight: "800" },
+    pomodoroHint: { color: colors.textMuted, fontSize: 12, textAlign: "center", lineHeight: 17, marginTop: 14 },
   });
 
   return styles;

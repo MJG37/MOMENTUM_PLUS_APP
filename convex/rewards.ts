@@ -3,9 +3,12 @@ import { mutation, query } from "./_generated/server";
 
 const getEarnedPoints = async (ctx: any, owner: string) => {
   const todos = await ctx.db.query("todos").collect();
-  return todos
-    .filter((todo: any) => todo.owner === owner && todo.isCompleted)
+  const earnings = await ctx.db.query("taskEarnings").withIndex("by_owner", (q: any) => q.eq("owner", owner)).collect();
+  const earnedTodoIds = new Set(earnings.map((earning: any) => String(earning.todoId)));
+  const legacyCompletedPoints = todos
+    .filter((todo: any) => todo.owner === owner && todo.isCompleted && !earnedTodoIds.has(String(todo._id)))
     .reduce((total: number, todo: any) => total + (todo.points ?? 10), 0);
+  return earnings.reduce((total: number, earning: any) => total + earning.points, 0) + legacyCompletedPoints;
 };
 
 export const getSummary = query({
@@ -18,7 +21,7 @@ export const getSummary = query({
       .order("desc")
       .collect();
     const spent = redemptions.reduce((total, reward) => total + reward.cost, 0);
-    return { earned, spent, available: earned - spent, redemptions };
+    return { earned, spent, available: Math.max(0, earned - spent), redemptions };
   },
 });
 
@@ -107,17 +110,18 @@ export const redeem = mutation({
       .collect();
     const spent = redemptions.reduce((total, reward) => total + reward.cost, 0);
 
-    if (earned - spent < args.cost) {
+    const available = Math.max(0, earned - spent);
+    if (available < args.cost) {
       // Insufficient points is normal user feedback, not a server failure.
       // Returning a result avoids surfacing an expected condition in Expo's LogBox.
-      return { status: "insufficient_points" as const, available: earned - spent };
+      return { status: "insufficient_points" as const, available };
     }
 
     const redemptionId = await ctx.db.insert("redemptions", args);
     return {
       status: "redeemed" as const,
       redemptionId,
-      available: earned - spent - args.cost,
+      available: available - args.cost,
     };
   },
 });
