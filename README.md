@@ -158,7 +158,7 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **Login does not work:** Make sure the credentials are entered exactly as follows:
 
-  * **Username:** `Guest`
+  * **Username:** `Admin`
   * **Password:** `#Hello`
 
   **//WHEN RESETTING YOUR PASSWORD: Authentication details for admin is as follows:**
