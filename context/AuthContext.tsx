@@ -5,6 +5,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 
 const USERS_KEY = "@MomentumApp:users";
 const CURRENT_USER_KEY = "@MomentumApp:currentUser";
+const GUEST_USERNAME = "Guest";
+const GUEST_PASSWORD = "#Hello";
 // Versioned so existing installs retry the safe one-time cloud migration.
 const LOCAL_ACCOUNTS_MIGRATED_KEY = "@MomentumApp:localAccountsMigrated:v2";
 
@@ -122,8 +124,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [migrateLocalAccounts]);
 
   const login = async (usernameInput: string, passwordInput: string) => {
+    if (usernameInput.trim().toLowerCase() === GUEST_USERNAME.toLowerCase() && passwordInput === GUEST_PASSWORD) {
+      setUsername(GUEST_USERNAME);
+      await safeSetItem(CURRENT_USER_KEY, GUEST_USERNAME);
+      return { success: true };
+    }
     try {
       const account = await loginAccount({ username: usernameInput, password: passwordInput });
+      if (account.status !== "authenticated") {
+        return { success: false, message: "Incorrect name or password. Please try again." };
+      }
       setUsername(account.username);
       await safeSetItem(CURRENT_USER_KEY, account.username);
       return { success: true };

@@ -31,8 +31,10 @@ export const login = mutation({
   args: accountArgs,
   handler: async (ctx, args) => {
     const account = await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", usernameKey(args.username))).unique();
-    if (!account || account.password !== args.password.trim()) throw new ConvexError("Incorrect name or password.");
-    return { username: account.username };
+    if (!account || account.password !== args.password.trim()) {
+      return { status: "invalid_credentials" as const };
+    }
+    return { status: "authenticated" as const, username: account.username };
   },
 });
 

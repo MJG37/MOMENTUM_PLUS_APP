@@ -25,4 +25,10 @@ export default defineSchema ({
         rewardName: v.string(),
         cost: v.number(),
     }).index("by_owner", ["owner"]),
+    customRewards: defineTable({
+        owner: v.string(),
+        name: v.string(),
+        description: v.string(),
+        cost: v.number(),
+    }).index("by_owner", ["owner"]),
 });

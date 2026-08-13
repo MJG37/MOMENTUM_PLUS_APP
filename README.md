@@ -1,50 +1,164 @@
-# Welcome to your Expo app 👋
+# **Momentum Plus: Build Momentum, Stay Focused**
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Momentum Plus is a mobile application built with **React Native and Expo** that helps students stay focused and reduce digital distractions through a task-based reward system. The app allows users to complete tasks, earn points, track their progress and maintain streaks to encourage consistent study habits. Momentum Plus is designed to provide a simple, motivating and easy-to-use way for students to improve their productivity and manage their phone use.
 
-## Get started
+The application is not performance-intensive and is designed to run across a wide range of modern Android and iOS devices.
 
-1. Install dependencies
+## **Key Features**
 
-   ```bash
-   npm install
-   ```
+* Access the app using a predetermined login account.
+* Create and complete tasks to earn points.
+* A task-based reward system designed to encourage productivity and reduce digital distractions.
+* Track progress through the app.
+* Maintain streaks to encourage consistency and continued productivity.
+* A simple and intuitive interface designed with students in mind.
+* Light and dark mode support.
+* Responsive design intended to work across different phone screen sizes.
+* Cross-platform support for Android and iOS devices.
+* The application can be tested directly on a physical phone using Expo Go.
+* User data and application functionality are supported by the project's Convex backend.
 
-2. Start the app
+## **Getting Started**
 
-   ```bash
-   npx expo start
-   ```
+### **Prerequisites**
 
-In the output, you'll find options to open the app in a
+To run this application, you need to have the following installed:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* **Node.js**: The LTS version is recommended.
+* **npm**: A package manager for installing dependencies. npm is included with Node.js.
+* **Git**: For cloning the Momentum Plus repository.
+* **Expo Go**: The mobile application used to run and test Expo projects on a physical Android or iOS device.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+You do **not** need to have the developer's GitHub, Expo, or other personal accounts logged into your computer or phone to run the project.
 
-## Get a fresh project
+### **Installation & Setup**
 
-When you're ready, run:
+This is a complete walkthrough on how to run Momentum Plus. First, ensure the above requirements are met. **Do not move directories until specified.**
 
-```bash
-npm run reset-project
-```
+1. **Check that Node.js and npm are installed.**
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   You can use the following commands in your terminal:
 
-## Learn more
+   `node -v`
 
-To learn more about developing your project with Expo, look at the following resources:
+   `npm -v`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2. **Check that Git is installed and working.**
 
-## Join the community
+   You can use:
 
-Join our community of developers creating universal apps.
+   `git --version`
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. **Open a terminal and navigate to the directory where you want to store the Momentum Plus project.**
+
+**Clone the Repository**
+
+Staying in the current terminal tab, run the following command to download the project:
+
+`git clone https://github.com/MJG37/MOMENTUM_PLUS_APP.git`
+
+The repository is public, so you do not need to sign into the developer's GitHub account to clone it.
+
+**Navigate to the Project Directory**
+
+Change into the project folder:
+
+`cd MOMENTUM_PLUS_APP`
+
+**Install Dependencies**
+
+Install all the necessary packages for the app:
+
+`npm install`
+
+This will install the dependencies specified in the project's `package.json`, including React Native, Expo, Expo Router and Convex.
+
+If `npm install` does not work, check that Node.js and npm are installed correctly and try running the command again.
+
+**Run the Application**
+
+Start the Expo development server:
+
+`npx expo start`
+
+After running this command, a QR code will appear in the terminal. Expo's current documentation recommends using a physical device for testing because it allows the application to be tested in an environment similar to what the user will experience.
+
+### **View the App**
+
+* **On an Android phone:** Install **Expo Go** from the Google Play Store. Open Expo Go and use the QR-code scanner to scan the QR code shown in the terminal.
+* **On an iPhone:** Open the Camera app and scan the QR code. The project can then be opened through Expo Go.
+* **On an Android emulator:** Press `a` in the terminal if an Android emulator has already been set up.
+* **On an iOS simulator:** Press `i` in the terminal if an iOS simulator has already been set up.
+* **On a web browser:** Press `w` in the terminal to open the web version. However, this is not the intended way to use Momentum Plus, and the appearance/functionality may differ from the mobile version.
+
+Expo officially supports running Expo projects on Android, iOS and web, with Expo Go available for Android and iOS testing.
+
+### **If the Phone Cannot Connect**
+
+The computer and phone should normally be connected to the **same Wi-Fi network** when using the standard Expo connection.
+
+If the phone cannot connect, try:
+
+`npx expo start --tunnel`
+
+Expo provides the tunnel connection as an alternative when the normal local network connection does not work, such as when the router or network configuration prevents the phone from connecting to the development server.
+
+## **Important Notes ⚠️**
+
+* **Login Credentials:** For this version of the app you can create any accoutn you wish
+
+However, if any login account fails: please use the hardcoded login credentials below:
+
+  * **Username:** `Guest`
+  * **Password:** `#Hello`
+
+* **No Developer Accounts Required:** The teacher does not need access to the developer's personal GitHub, Expo or other accounts. The GitHub repository is public and can be cloned directly.
+
+* **Phone Compatibility:** Momentum Plus is designed as a cross-platform React Native and Expo application for a wide range of modern Android and iOS devices. This includes Android devices from manufacturers such as Xiaomi, Samsung and Google, as well as iPhones. Exact compatibility can depend on the device's operating system version and the version of Expo Go installed.
+
+NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
+
+* **Xiaomi Compatibility:** Momentum Plus can be tested on a Xiaomi Android phone through Expo Go. The teacher should install Expo Go on the Xiaomi device and scan the QR code generated by `npx expo start`.
+
+* **Dark Mode:** Momentum Plus supports both light and dark mode. The application is configured to automatically respond to the device's interface style.
+
+* **Orientation:** Momentum Plus is ONLY designed for portrait orientation in this version.
+
+* **Internet Connection:** An internet connection is required to install the project dependencies and connect the phone to the Expo development server. The phone and computer should normally be connected to the same Wi-Fi network when using the standard connection method.
+
+* **Expo Go:** Expo Go is being used to test the application during development. Expo describes Expo Go as a tool for students and learners to quickly test Expo projects on Android and iOS devices.
+
+* **Expo SDK:** This project currently uses **Expo SDK 54**. The installed Expo version is specified in the project's `package.json`.
+
+* **Project Backend:** The application uses Convex for backend functionality, with the required Convex dependencies included in the project.
+
+## **Troubleshooting & FAQ ❓**
+
+* **`npm install` fails:** This could be caused by network issues, an outdated Node.js installation, or a problem installing one of the project dependencies. Check that Node.js and npm are installed correctly, then try running `npm install` again.
+
+* **The app does not load on the phone:** Ensure that the computer and phone are connected to the **same Wi-Fi network** and that Expo Go is installed on the phone.
+
+* **The QR code does not work:** Make sure Expo Go is open and that the QR code is being scanned correctly. If the standard connection does not work, try:
+
+  `npx expo start --tunnel`
+
+* **Can't find the QR code:** Scroll up in the terminal to find the output from the `npx expo start` command.
+
+* **Xiaomi phone cannot connect:** Ensure Expo Go is installed on the Xiaomi phone and that both the phone and computer are connected to the same Wi-Fi network. If this still does not work, try the tunnel command shown above.
+
+* **The project says it is incompatible with Expo Go:** The version of Expo Go must support the Expo SDK version used by the project. Expo notes that projects using an unsupported SDK version can display an incompatibility error. If this occurs, the project's Expo SDK may need to be updated or the appropriate compatible Expo Go version may need to be used.
+
+* **The app looks slightly different on another phone:** Differences in screen sizes, Android/iOS versions and system UI can cause small visual differences. Momentum Plus is designed to be responsive and cross-platform, but exact rendering can vary between devices.
+
+* **Login does not work:** Make sure the credentials are entered exactly as follows:
+
+  * **Username:** `Guest`
+  * **Password:** `#Hello`
+
+## **Repository**
+
+The complete Momentum Plus project can be accessed through the following public GitHub repository:
+
+`https://github.com/MJG37/MOMENTUM_PLUS_APP`
+
+The repository contains the application's source code, assets, configuration files and dependencies required to run the project.
