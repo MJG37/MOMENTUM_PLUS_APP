@@ -140,6 +140,9 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **`npm install` fails:** This could be caused by network issues, an outdated Node.js installation, or a problem installing one of the project dependencies. Check that Node.js and npm are installed correctly, then try running `npm install` again.
 
+* **The app does not load on the EMULATOR phone:** In the same terminal where Expo Go is deployed, press r
+<img width="1045" height="932" alt="image" src="https://github.com/user-attachments/assets/f8e39258-7a3b-4be4-80c2-6cab450539c1" />
+
 * **The app does not load on the phone:** Ensure that the computer and phone are connected to the **same Wi-Fi network** and that Expo Go is installed on the phone.
 
 * **The QR code does not work:** Make sure Expo Go is open and that the QR code is being scanned correctly. If the standard connection does not work, try:
