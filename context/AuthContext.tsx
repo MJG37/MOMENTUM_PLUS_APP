@@ -28,9 +28,9 @@ interface AuthContextType {
   logout: () => Promise<void>;
   clearAllData: () => Promise<void>;
   cancelSignup: () => Promise<void>;
-  deleteCurrentAccount: () => Promise<void>;
+  deleteCurrentAccount: () => Promise<{ success: boolean; message?: string }>;
   saveSecurityAnswers: (answers: NonNullable<User["securityAnswers"]>) => Promise<void>;
-  verifyAndResetPassword: (username: string, answers: NonNullable<User["securityAnswers"]>, newPassword: string) => Promise<{ success: boolean }>;
+  verifyAndResetPassword: (username: string, answers: NonNullable<User["securityAnswers"]>, newPassword: string) => Promise<{ success: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -167,10 +167,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteCurrentAccount = async () => {
-    if (!username) return;
-    await deleteAccount({ username });
-    setUsername(null);
-    await safeRemoveItem(CURRENT_USER_KEY);
+    if (!username) return { success: false };
+    try {
+      const result = await deleteAccount({ username });
+      if (result.status === "protected") return { success: false, message: "The Admin demo account cannot be deleted." };
+      setUsername(null);
+      await safeRemoveItem(CURRENT_USER_KEY);
+      return { success: true };
+    } catch {
+      return { success: false, message: "Your account could not be deleted. Please try again." };
+    }
   };
 
   const saveSecurityAnswers = async (answers: NonNullable<User["securityAnswers"]>) => {
@@ -185,6 +191,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       const result = await resetPassword({ username: usernameInput, answers, newPassword });
+      if (result.status === "protected") return { success: false, message: "The Admin demo account password cannot be changed." };
+      if (result.status === "weak_password") return { success: false, message: "Use at least 4 characters and 1 symbol." };
       return { success: result.status === "reset" };
     } catch {
       return { success: false };

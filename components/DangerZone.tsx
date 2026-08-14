@@ -75,6 +75,10 @@ const DangerZone = () => {
   };
 
   const handleDeleteAccount = () => {
+    if (username?.trim().toLowerCase() === "admin") {
+      Alert.alert("Admin account protected", "This is the demo/fallback Admin account and cannot be deleted.");
+      return;
+    }
     Alert.alert(
       "Delete Account",
       "This permanently deletes your account, tasks, rewards, and points across all devices.",
@@ -85,7 +89,11 @@ const DangerZone = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteCurrentAccount();
+              const result = await deleteCurrentAccount();
+              if (!result.success) {
+                Alert.alert("Account not deleted", result.message ?? "Your account could not be deleted. Please try again.");
+                return;
+              }
               resetTheme();
               router.dismissAll();
             } catch {

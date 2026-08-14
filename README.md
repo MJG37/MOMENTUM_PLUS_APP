@@ -104,17 +104,7 @@ Expo provides the tunnel connection as an alternative when the normal local netw
 
 ## **Important Notes ⚠️**
 
-* **Login Credentials:** For this version of the app you can create any accoutn you wish
-
-However, if any login account fails: please use THE ADMIN login credentials below:
-
-  * **Username:** `Admin`
-  * **Password:** `#Hello`
-
-## **WHEN RESETTING YOUR PASSWORD: Authentication details for admin is as follows:**
-  * **Birthday:** `1st January 2006`
-  * **Born in Country:** `New Zealand`
-  * **Favourite color:** `Black`
+* **Login Credentials:** For this version of the app you can create any account you wish
 
 * **No Developer Accounts Required:** The teacher does not need access to the developer's personal GitHub, Expo or other accounts. The GitHub repository is public and can be cloned directly.
 
@@ -134,7 +124,11 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **Expo SDK:** This project currently uses **Expo SDK 54**. The installed Expo version is specified in the project's `package.json`.
 
-* **Project Backend:** The application uses Convex for backend functionality, with the required Convex dependencies included in the project.
+* **BACKEND LOGIC: My Convex Cloud Database & Admin Access:** The application uses Convex for its backend data store. 
+  
+  You can access the live backend database to view real-time data tables (such as the `accounts` collection) via the [Convex Dashboard](https://dashboard.convex.dev/t/23085/momentum-plus-app/jovial-dalmatian-107/data?table=accounts).
+
+  ⚠️ **Action Required for Database Access:** To log into this dashboard as an administrator, you must first **accept the collaborator email invitation** sent to your email address from the Convex system. Once accepted, you will have full admin rights to monitor and verify live application data during grading.
 
 ## **Troubleshooting & FAQ ❓**
 
@@ -142,6 +136,8 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **The app does not load on the EMULATOR phone:** In the same terminal where Expo Go is deployed, press r
 <img width="1045" height="932" alt="image" src="https://github.com/user-attachments/assets/f8e39258-7a3b-4be4-80c2-6cab450539c1" />
+
+* **To Stop Expo Go Server** In the same terminal where Expo Go is deployed, press ctrl + c (together)
 
 * **The app does not load on the phone:** Ensure that the computer and phone are connected to the **same Wi-Fi network** and that Expo Go is installed on the phone.
 
@@ -159,7 +155,7 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **The app looks slightly different on another phone:** Differences in screen sizes, Android/iOS versions and system UI can cause small visual differences. Momentum Plus is designed to be responsive and cross-platform, but exact rendering can vary between devices.
 
-* **Login does not work:** Make sure the credentials are entered exactly as follows:
+* **Login does not work:** Make sure the credentials are entered exactly as follows: This is a DEMO/FALLBACK ACCOUNT that CANNOT BE DELETED!
 
   * **Username:** `Admin`
   * **Password:** `#Hello`

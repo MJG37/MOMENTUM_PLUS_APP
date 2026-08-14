@@ -14,6 +14,8 @@ const answerValidator = v.object({
 });
 
 const usernameKey = (username: string) => username.trim().toLowerCase();
+const ADMIN_USERNAME_KEY = "admin";
+const hasValidPassword = (password: string) => password.trim().length >= 4 && /[^A-Za-z0-9]/.test(password);
 
 export const signup = mutation({
   args: accountArgs,
@@ -21,7 +23,7 @@ export const signup = mutation({
     const username = args.username.trim();
     const key = usernameKey(username);
     if (await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", key)).unique()) return { status: "duplicate" as const };
-    if (args.password.trim().length < 4 || !/[^A-Za-z0-9]/.test(args.password)) return { status: "weak_password" as const };
+    if (!hasValidPassword(args.password)) return { status: "weak_password" as const };
     await ctx.db.insert("accounts", { username, usernameKey: key, password: args.password.trim() });
     return { status: "created" as const, username };
   },
@@ -54,6 +56,8 @@ export const resetPassword = mutation({
     const saved = account?.securityAnswers;
     const matches = saved && saved.birthday === args.answers.birthday && saved.country === args.answers.country && saved.favouriteColor.trim().toLowerCase() === args.answers.favouriteColor.trim().toLowerCase();
     if (!account || !matches) return { status: "authentication_failed" as const };
+    if (usernameKey(account.username) === ADMIN_USERNAME_KEY) return { status: "protected" as const };
+    if (!hasValidPassword(args.newPassword)) return { status: "weak_password" as const };
     await ctx.db.patch(account._id, { password: args.newPassword.trim() });
     return { status: "reset" as const };
   },
@@ -76,6 +80,7 @@ export const deleteAccount = mutation({
     const key = usernameKey(args.username);
     const account = await ctx.db.query("accounts").withIndex("by_usernameKey", q => q.eq("usernameKey", key)).unique();
     if (!account) throw new ConvexError("Account not found.");
+    if (key === ADMIN_USERNAME_KEY) return { status: "protected" as const };
     const todos = await ctx.db.query("todos").collect();
     const redemptions = await ctx.db.query("redemptions").withIndex("by_owner", q => q.eq("owner", account.username)).collect();
     const customRewards = await ctx.db.query("customRewards").withIndex("by_owner", q => q.eq("owner", account.username)).collect();
@@ -85,6 +90,7 @@ export const deleteAccount = mutation({
     for (const reward of customRewards) await ctx.db.delete(reward._id);
     for (const preference of preferences) await ctx.db.delete(preference._id);
     await ctx.db.delete(account._id);
+    return { status: "deleted" as const };
   },
 });
 
