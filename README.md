@@ -150,7 +150,7 @@ NOTE: PLEASE MAKE SURE THAT EXPO GO version SDK54 is installed!
 
 * **Phone cannot connect:** Ensure Expo Go is installed on your phone and that both the phone and computer are connected to the SAME Wi-Fi network. If this still does not work, try the tunnel command shown above.
 
-   **NOTE** My app and expo go WILL NOT be able to work on the EGGS SCHOOL WIFI (eduroam) as the adminstrator permissions block users from entering the app output! So instead switch to another PRIVATE Wifi network or connect both your laptop/computer and physical phone/phone emulator to mobile data hotspot.
+   **NOTE** IF USING A PHYSICAL ANDROID/IOS PHONE: My app and expo go WILL NOT be able to work on the EGGS SCHOOL WIFI (eduroam) as the adminstrator permissions block users from entering the app output! So instead switch to another PRIVATE Wifi network or connect both your laptop/computer and physical phone/phone emulator to mobile data hotspot.
 
 * **The project says it is incompatible with Expo Go:** The version of Expo Go must support the Expo SDK version used by the project. Expo notes that projects using an unsupported SDK version can display an incompatibility error. If this occurs, the project's Expo SDK may need to be updated or the appropriate compatible Expo Go version may need to be used.
 
